@@ -16,6 +16,8 @@ use Yii;
  */
 class Request extends \yii\db\ActiveRecord
 {
+    const NAME_ADDRESS_EMAIL_MAX_LENGTH = 255;
+    const PHONE_MAX_LENGTH = 10;
     /**
      * @inheritdoc
      */
@@ -31,8 +33,8 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             [['date_create'], 'safe'],
-            [['name', 'adress', 'email'], 'string', 'max' => 255],
-            [['phone'], 'string', 'max' => 10],
+            [['name', 'adress', 'email'], 'string', 'max' => self::NAME_ADDRESS_EMAIL_MAX_LENGTH],
+            [['phone'], 'string', 'max' => self::PHONE_MAX_LENGTH],
         ];
     }
 

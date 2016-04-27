@@ -299,3 +299,4 @@
 192.168.56.1 - - [27/Apr/2016:17:36:16 +0300] "GET /assets/901af75a/yii.js HTTP/1.1" 304 0 "http://yii2.dev/gii" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
 192.168.56.1 - - [27/Apr/2016:17:36:16 +0300] "GET /assets/a3c5221/jquery.js HTTP/1.1" 304 0 "http://yii2.dev/gii" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
 192.168.56.1 - - [27/Apr/2016:17:36:16 +0300] "GET /assets/2ce25e30/js/bootstrap.js HTTP/1.1" 304 0 "http://yii2.dev/gii" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+192.168.56.1 - - [27/Apr/2016:17:42:30 +0300] "GET / HTTP/1.1" 200 1288 "http://yii2.dev/request" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
