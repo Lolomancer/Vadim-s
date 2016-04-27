@@ -19,7 +19,7 @@ class RequestSearch extends Request
     {
         return [
             [['id'], 'integer'],
-            [['name', 'adress', 'email', 'phone', 'date_create'], 'safe'],
+            [['name', 'address', 'email', 'phone', 'date_create'], 'safe'],
         ];
     }
 
@@ -64,7 +64,7 @@ class RequestSearch extends Request
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'adress', $this->adress])
+            ->andFilterWhere(['like', 'address', $this->address])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'phone', $this->phone]);
 

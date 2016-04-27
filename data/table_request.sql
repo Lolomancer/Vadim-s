@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS `mydb`.`tbl_request` ;
 CREATE TABLE IF NOT EXISTS `mydb`.`tbl_request` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
-  `adress` VARCHAR(255) NULL,
+  `address` VARCHAR(255) NULL,
   `email` VARCHAR(255) NULL,
   `phone` VARCHAR(10) NULL,
   `date_create` DATETIME NULL,

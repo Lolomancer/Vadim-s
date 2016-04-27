@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property string $name
- * @property string $adress
+ * @property string $address
  * @property string $email
  * @property string $phone
  * @property string $date_create
@@ -33,7 +33,7 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             [['date_create'], 'safe'],
-            [['name', 'adress', 'email'], 'string', 'max' => self::NAME_ADDRESS_EMAIL_MAX_LENGTH],
+            [['name', 'address', 'email'], 'string', 'max' => self::NAME_ADDRESS_EMAIL_MAX_LENGTH],
             [['phone'], 'string', 'max' => self::PHONE_MAX_LENGTH],
         ];
     }
@@ -46,7 +46,7 @@ class Request extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
-            'adress' => Yii::t('app', 'Adress'),
+            'address' => Yii::t('app', 'Address'),
             'email' => Yii::t('app', 'Email'),
             'phone' => Yii::t('app', 'Phone'),
             'date_create' => Yii::t('app', 'Date Create'),
