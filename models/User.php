@@ -5,20 +5,27 @@ namespace app\models;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use Yii;
+use app\models\query\UserQuery;
 
+/**
+ * User model
+ *
+ * @property integer $id
+ * @property string $username
+ * @property string $surname
+ * @property string $name
+ * @property string $password write-only password
+ * @property string $salt
+ * @property string $access_token
+ * @property string $create_date
+ *
+ */
 
 class User extends ActiveRecord implements IdentityInterface
 {
-    public $id;
-    public $username;
-    public $name;
-    public $surname;
-    public $password;
-    public $salt;
-    public $access_token;
-    public $create_date;
-
     const MIN_LENGTH_PASS = 6;
+    const MAX_LENGTH_USERNAME = 128;
+    const MAX_LENGTH_NAME_SURNAME = 45;
 
     /**
      * Table
@@ -38,6 +45,8 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['username', 'name', 'surname', 'password'], 'required'],
             [['password'], 'string', 'min' => self::MIN_LENGTH_PASS],
+            [['username'], 'string', 'max' => self::MAX_LENGTH_USERNAME],
+            [['name', 'surname'], 'string', 'max' => self::MAX_LENGTH_NAME_SURNAME],
             [['username'], 'email'],
             [['username', 'access_token'], 'unique']
         ];
@@ -56,7 +65,8 @@ class User extends ActiveRecord implements IdentityInterface
             'surname' => _('Фамилия'),
             'password' => _('Пароль'),
             'salt' => _('Соль'),
-            'access_token' => _('Ключ аутентификации')
+            'access_token' => _('Ключ аутентификации'),
+            'create_date' => _('Дата регистрации')
         ];
     }
 
@@ -147,9 +157,9 @@ class User extends ActiveRecord implements IdentityInterface
      * @param  string $password password to validate
      * @return boolean if password provided is valid for current user
      */
-    public function validatePassword($password)
+    public function validatePassword ($password)
     {
-        return $this->password === $password;
+        return $this->password === $this->passWithSalt($password, $this->salt);
     }
 
     /**
@@ -170,7 +180,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * 
+     * Unnecessary function
      * @param $password
      */
     public function setPassword ($password) {
@@ -187,5 +197,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function passWithSalt($password, $salt)
     {
         return hash('sha512', $password . $salt);
+    }
+
+    /**
+     * Calls ActiveQuery child
+     * @return UserQuery
+     */
+    public static function find()
+    {
+        return new UserQuery(get_called_class());
     }
 }
