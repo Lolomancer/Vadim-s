@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use app\models\query\AccessQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "clndr_access".
@@ -12,10 +14,10 @@ use Yii;
  * @property integer $user_guest
  * @property string $date
  *
- * @property ClndrUser $userGuest
- * @property ClndrUser $userOwner
+ * @property User $userGuest
+ * @property User $userOwner
  */
-class Access extends \yii\db\ActiveRecord
+class Access extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -31,11 +33,11 @@ class Access extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_owner', 'user_guest', 'date'], 'required'],
+            [['user_guest', 'date'], 'required'],
             [['user_owner', 'user_guest'], 'integer'],
             [['date'], 'safe'],
-            [['user_guest'], 'exist', 'skipOnError' => true, 'targetClass' => ClndrUser::className(), 'targetAttribute' => ['user_guest' => 'id']],
-            [['user_owner'], 'exist', 'skipOnError' => true, 'targetClass' => ClndrUser::className(), 'targetAttribute' => ['user_owner' => 'id']],
+            [['user_guest'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_guest' => 'id']],
+            [['user_owner'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_owner' => 'id']],
         ];
     }
 
@@ -46,9 +48,9 @@ class Access extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'user_owner' => Yii::t('app', 'User Owner'),
-            'user_guest' => Yii::t('app', 'User Guest'),
-            'date' => Yii::t('app', 'Date'),
+            'user_owner' => Yii::t('app', 'Владелец'),
+            'user_guest' => Yii::t('app', 'Гость'),
+            'date' => Yii::t('app', 'Дата'),
         ];
     }
 
@@ -57,7 +59,7 @@ class Access extends \yii\db\ActiveRecord
      */
     public function getUserGuest()
     {
-        return $this->hasOne(ClndrUser::className(), ['id' => 'user_guest']);
+        return $this->hasOne(User::className(), ['id' => 'user_guest']);
     }
 
     /**
@@ -65,7 +67,7 @@ class Access extends \yii\db\ActiveRecord
      */
     public function getUserOwner()
     {
-        return $this->hasOne(ClndrUser::className(), ['id' => 'user_owner']);
+        return $this->hasOne(User::className(), ['id' => 'user_owner']);
     }
 
     /**
@@ -74,6 +76,21 @@ class Access extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\query\AccessQuery(get_called_class());
+        return new AccessQuery(get_called_class());
+    }
+
+    /**
+     * Before save condition allows to set user_owner id to current user id
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave ($insert)
+    {
+        if ($this->getIsNewRecord())
+        {
+            $this->user_owner = Yii::$app->user->id;
+        }
+        parent::beforeSave($insert);
+        return true;
     }
 }

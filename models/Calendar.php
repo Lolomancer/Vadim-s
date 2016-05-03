@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use app\models\query\CalendarQuery;
 
 /**
  * This is the model class for table "clndr_calendar".
@@ -13,9 +15,9 @@ use Yii;
  * @property string $date_event_start
  * @property string $date_event_end
  *
- * @property ClndrUser $creator0
+ * @property User $user
  */
-class Calendar extends \yii\db\ActiveRecord
+class Calendar extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -31,11 +33,11 @@ class Calendar extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['text', 'creator'], 'required'],
+            [['text'], 'required'],
             [['text'], 'string'],
             [['creator'], 'integer'],
             [['date_event_start', 'date_event_end'], 'safe'],
-            [['creator'], 'exist', 'skipOnError' => true, 'targetClass' => ClndrUser::className(), 'targetAttribute' => ['creator' => 'id']],
+            [['creator'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['creator' => 'id']],
         ];
     }
 
@@ -46,19 +48,19 @@ class Calendar extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'text' => Yii::t('app', 'Text'),
-            'creator' => Yii::t('app', 'Creator'),
-            'date_event_start' => Yii::t('app', 'Date Event Start'),
-            'date_event_end' => Yii::t('app', 'Date Event End'),
+            'text' => Yii::t('app', 'Текст'),
+            'creator' => Yii::t('app', 'Владелец'),
+            'date_event_start' => Yii::t('app', 'Начало события'),
+            'date_event_end' => Yii::t('app', 'Конец события'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreator0()
+    public function getUser()
     {
-        return $this->hasOne(ClndrUser::className(), ['id' => 'creator']);
+        return $this->hasOne(User::className(), ['id' => 'creator']);
     }
 
     /**
@@ -67,6 +69,22 @@ class Calendar extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\query\CalendarQuery(get_called_class());
+        return new CalendarQuery(get_called_class());
     }
+
+    /**
+    * Before save condition allows to set creators id to current user id
+    * @param bool $insert
+    * @return bool
+    */
+    public function beforeSave ($insert)
+    {
+        if ($this->getIsNewRecord())
+        {
+            $this->creator = Yii::$app->user->id;
+        }
+        parent::beforeSave($insert);
+        return true;
+    }
+
 }

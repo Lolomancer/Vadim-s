@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Calendar */
 
-$this->title = Yii::t('app', 'Create Calendar');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Calendars'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Создание события');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Событие'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="calendar-create">
