@@ -15,7 +15,7 @@ use yii\jui\DatePicker;
 
     <?= $form->field($model, 'user_guest')->textInput() ?>
 
-    <?= $form->field($model, 'date')->widget(DatePicker::className(), ['language' => 'ru', 'dateFormat' => 'dd-MM-yyyy']) ?>
+    <?= $form->field($model, 'date')->widget(DatePicker::className(), ['language' => 'ru', 'dateFormat' => 'yyyy-MM-dd']) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Предоставить доступ') : Yii::t('app', 'Изменить настройки доступа'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
