@@ -4,7 +4,11 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Calendar;
+use app\models\Access;
+use app\models\search\AccessSearch;
 use app\models\search\CalendarSearch;
+use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -26,34 +30,52 @@ class CalendarController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['Mycalendar', 'Sharedevents','create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['Mycalendar', 'Sharedevents', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+
         ];
     }
 
     /**
-     * Lists all Calendar models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $searchModel = new CalendarSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
      * Displays a single Calendar model.
-     * @param integer $id
-     * @return mixed
+     *
+     * @param $id
+     * @return string
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+
+        $result = Access::checkAccess($model);
+
+        if($result)
+        {
+            switch($result) {
+                case Access::ACCESS_CREATOR:
+                    return $this->render('viewCreator', [
+                        'model' => $model,
+                    ]);
+                    break;
+                case Access::ACCESS_GUEST:
+                    return $this->render('viewGuest', [
+                        'model' => $model,
+                    ]);
+                    break;
+            }
+        }
+        throw new ForbiddenHttpException("Not allowed! ");
+
     }
 
     /**
@@ -103,7 +125,7 @@ class CalendarController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['mycalendar']);
     }
 
     /**
@@ -120,5 +142,27 @@ class CalendarController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * Lists user Calendar models.
+     *
+     * @return string
+     */
+    public function actionMycalendar()
+    {
+        $searchModel = new CalendarSearch();
+
+        $dataProvider = $searchModel->search([
+            'CalendarSearch'=> [
+                'creator' => Yii::$app->user->id
+                ]
+            ]);
+
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+
     }
 }

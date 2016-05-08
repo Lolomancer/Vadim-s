@@ -2,9 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Calendar;
+use app\models\User;
 use Yii;
 use app\models\Access;
+use app\models\search\CalendarSearch;
 use app\models\search\AccessSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -26,6 +30,17 @@ class AccessController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['Myaccess', 'shared', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['Myaccess', 'shared', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -33,10 +48,14 @@ class AccessController extends Controller
      * Lists all Access models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionMyaccess()
     {
         $searchModel = new AccessSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search([
+            'AccessSearch' => [
+                'user_owner' => Yii::$app->user->id
+    ]
+        ]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -103,7 +122,7 @@ class AccessController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['myaccess']);
     }
 
     /**
@@ -121,4 +140,24 @@ class AccessController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    //TODO
+    public function actionShared()
+    {
+        //$events = $this->findModel($this->id)->getSharedEvents();
+        $events = User::findIdentity(Yii::$app->user->id)->getSharedEvents();
+        $searchModel = new CalendarSearch();
+
+        $dataProvider = $searchModel->search([
+            'query' => $events
+        ]);
+
+        return $this->render('shared', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'events' => $events
+        ]);
+    }
+
+
 }
