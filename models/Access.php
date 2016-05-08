@@ -19,6 +19,10 @@ use yii\db\ActiveRecord;
  */
 class Access extends ActiveRecord
 {
+
+    const ACCESS_CREATOR = 1;
+    const ACCESS_GUEST = 2;
+
     /**
      * @inheritdoc
      */
@@ -36,8 +40,8 @@ class Access extends ActiveRecord
             [['user_guest', 'date'], 'required'],
             [['user_owner', 'user_guest'], 'integer'],
             [['date'], 'safe'],
-            [['user_guest'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_guest' => 'id']],
-            [['user_owner'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_owner' => 'id']],
+            [['user_guest'], 'exist', 'skipOnError' => false, 'targetClass' => User::className(), 'targetAttribute' => ['user_guest' => 'id']],
+            [['user_owner'], 'exist', 'skipOnError' => false, 'targetClass' => User::className(), 'targetAttribute' => ['user_owner' => 'id']],
         ];
     }
 
@@ -59,7 +63,7 @@ class Access extends ActiveRecord
      */
     public function getUserGuest()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_guest']);
+        return $this->hasMany(User::className(), ['id' => 'user_guest']);
     }
 
     /**
@@ -92,5 +96,28 @@ class Access extends ActiveRecord
         }
         parent::beforeSave($insert);
         return true;
+    }
+
+    /**
+     * Check access for Calendar note
+     *
+     * @param Calendar $model
+     * @return bool|int
+     */
+    public static function checkAccess($model)
+    {
+        if ($model->creator == Yii::$app->user->id){
+            return self::ACCESS_CREATOR;
+        }
+
+        $accessCalendar = self::find()
+            ->withUserGuest(Yii::$app->user->id)
+            ->withSharedDate($model->getDateEventStart())
+            ->exists();
+
+        if ($accessCalendar)
+            return self::ACCESS_GUEST;
+
+        return false;
     }
 }

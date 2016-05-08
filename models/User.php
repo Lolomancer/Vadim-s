@@ -19,6 +19,8 @@ use app\models\query\UserQuery;
  * @property string $access_token
  * @property string $create_date
  *
+ * @property array $sharedDates
+ *
  */
 
 class User extends ActiveRecord implements IdentityInterface
@@ -206,5 +208,37 @@ class User extends ActiveRecord implements IdentityInterface
     public static function find()
     {
         return new UserQuery(get_called_class());
+    }
+
+    /**
+     * Return shared dates
+     *
+     * @return \yii\db\ActiveQuery
+     */
+
+    public function getSharedDates()
+    {
+        return $this->hasMany(Access::className(), ['user_guest' => 'id']);
+    }
+
+    /**
+     * Return all events with shared dates
+     *
+     * @return array
+     */
+    public function getSharedEvents()
+    {
+        $dates = $this->sharedDates;
+
+        $objects = array();
+
+        for($i = 0; $i < count($dates); $i++) {
+            $objects[] = Calendar::find()
+                ->withDate($dates[$i]['date'])
+                ->withCreator($dates[$i]['user_owner'])
+                ->all();
+        }
+
+        return $objects;
     }
 }

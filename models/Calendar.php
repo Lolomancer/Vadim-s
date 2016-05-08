@@ -48,10 +48,11 @@ class Calendar extends ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'text' => Yii::t('app', 'Текст'),
+            'text' => Yii::t('app', 'Событие'),
             'creator' => Yii::t('app', 'Владелец'),
             'date_event_start' => Yii::t('app', 'Начало события'),
             'date_event_end' => Yii::t('app', 'Конец события'),
+            'user_name' => Yii::t('app', 'Владелец')
         ];
     }
 
@@ -85,6 +86,39 @@ class Calendar extends ActiveRecord
         }
         parent::beforeSave($insert);
         return true;
+    }
+
+    /**
+     * Return date in format for Access checking
+     *
+     * @return mixed
+     */
+    public function getDateEventStart()
+    {
+        $date = new \DateTime($this->date_event_start);
+        return $date->format('Y-m-d');
+    }
+
+    /**
+     * Return date start in format for view
+     *
+     * @return mixed
+     */
+    public function getDateTimeEventStart()
+    {
+        $date = new \DateTime($this->date_event_start);
+        return $date->format('d/m/Y h:m');
+    }
+
+    /**
+     * Return date start in format for view
+     *
+     * @return mixed
+     */
+    public function getDateTimeEventEnd()
+    {
+        $date = new \DateTime($this->date_event_end);
+        return $date->format('d/m/Y h:m');
     }
 
 }
