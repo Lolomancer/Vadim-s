@@ -2,12 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Access */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Настройки доступа'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Настройки доступа'), 'url' => ['myaccess']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="access-view">
@@ -29,8 +30,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'user_owner',
-            'user_guest',
+            //'user_owner',
+            [
+                'attribute' => 'user_owner',
+                'value' => User::findOne($model->user_owner)->name . ' ' . User::findOne($model->user_owner)->surname
+            ],
+            //'user_guest',
+            [
+                'attribute' => 'user_guest',
+                'value' => User::findOne($model->user_guest)->name . ' ' . User::findOne($model->user_guest)->surname
+            ],
             'date',
         ],
     ]) ?>

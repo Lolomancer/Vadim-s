@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Calendar */
 
-$this->title = Yii::t('app', 'Обновление события: ', [
+$this->title = Yii::t('app', 'Обновление события с ', [
     'modelClass' => 'Calendar',
-]) . $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'События'), 'url' => ['index']];
+]) .$model->getDateTimeEventStart().' по '.$model->getDateTimeEventEnd();
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'События'), 'url' => ['mycalendar']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Обновить');
 ?>

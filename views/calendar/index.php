@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\CalendarSearch */
@@ -23,12 +24,29 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             'text:ntext',
-            'creator',
-            'date_event_start',
-            'date_event_end',
+            //'creator',
+            [
+                'attribute' => 'user_owner',
+                'content' => function($model){
+                    return User::findOne($model->creator)->name . ' ' . User::findOne($model->creator)->surname;
+                }
+            ],
+            //'date_event_start',
+            [
+                'attribute' => 'date_event_start',
+                'content' => function($model){
+                    return $model->getDateTimeEventStart();
+                }
+            ],
+            //'date_event_end',
+            [
+                'attribute' => 'date_event_end',
+                'content' => function($model){
+                    return $model->getDateTimeEventEnd();
+                }
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
