@@ -18,7 +18,7 @@ class AccessQuery extends ActiveQuery
      */
     public function withUserGuest($id)
     {
-        return $this->andWhere('user_guest = :id', [":id" => $id]);
+        return $this->andWhere('user_guest = :id_guest', [":id_guest" => $id]);
     }
 
     /**
@@ -28,7 +28,7 @@ class AccessQuery extends ActiveQuery
      */
     public function withUserOwner($id)
     {
-        return $this->andWhere('user_owner = :id', [":id" => $id]);
+        return $this->andWhere('user_owner = :id_owner', [":id_owner" => $id]);
     }
 
     /**

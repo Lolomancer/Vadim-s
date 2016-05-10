@@ -160,5 +160,19 @@ class AccessController extends Controller
         ]);
     }
 
+    public function actionDates($id)
+    {
+        $searchModel = new AccessSearch();
+
+        $dataProvider = $searchModel->search([
+            'query' => Access::find()->withUserGuest(Yii::$app->user->id)->withUserOwner($id)->groupBy('date')
+        ]);
+
+        return $this->render('dates', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
 
 }
