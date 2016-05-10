@@ -53,7 +53,7 @@ AppAsset::register($this);
 
             [
                 'label' => 'События друзей',
-                'url' => ['/access/shared'],
+                'url' => ['/access/friends'],
                 'visible' => !Yii::$app->user->isGuest
             ],
 

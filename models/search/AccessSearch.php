@@ -41,7 +41,11 @@ class AccessSearch extends Access
      */
     public function search($params)
     {
-        $query = Access::find();
+        if (isset($params['query'])) {
+            $query = $params['query'];
+        } else {
+            $query = Access::find();
+        }
 
         // add conditions that should always apply here
 

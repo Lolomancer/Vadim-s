@@ -32,10 +32,10 @@ class AccessController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['Myaccess', 'shared', 'create', 'update', 'delete'],
+                'only' => ['Myaccess', 'friends', 'dates', 'create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['Myaccess', 'shared', 'create', 'update', 'delete'],
+                        'actions' => ['Myaccess', 'friends', 'dates', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -141,21 +141,22 @@ class AccessController extends Controller
         }
     }
 
-    //TODO
-    public function actionShared()
+    /**
+     * Shows the Users with shared Dates for logged User
+     *
+     * @return string
+     */
+    public function actionFriends()
     {
-        //$events = $this->findModel($this->id)->getSharedEvents();
-        $events = User::findIdentity(Yii::$app->user->id)->getSharedEvents();
-        $searchModel = new CalendarSearch();
+        $searchModel = new AccessSearch();
 
         $dataProvider = $searchModel->search([
-            'query' => $events
+            'query' => Access::find()->withUserGuest(Yii::$app->user->id)->groupBy('user_owner')
         ]);
 
-        return $this->render('shared', [
+        return $this->render('friends', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'events' => $events
+            'dataProvider' => $dataProvider
         ]);
     }
 
