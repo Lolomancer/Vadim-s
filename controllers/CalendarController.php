@@ -99,33 +99,46 @@ class CalendarController extends Controller
     /**
      * Updates an existing Calendar model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     *
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (Access::checkIsCreator($model)) {
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         }
+        throw new ForbiddenHttpException("Not allowed to update event of other user", 403);
     }
 
     /**
      * Deletes an existing Calendar model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
 
-        return $this->redirect(['mycalendar']);
+        if (Access::checkIsCreator($model)) {
+            $model->delete();
+            return $this->redirect(['mycalendar']);
+        }
+        throw new ForbiddenHttpException("Not allowed to delete event of other user", 403);
     }
 
     /**
@@ -166,6 +179,14 @@ class CalendarController extends Controller
 
     }
 
+    /**
+     * Routes to the shared events view with selected user_owner
+     * and share date for logged user as user_guest
+     *
+     * @param $id
+     * @param $date
+     * @return string
+     */
     public function actionShared($id, $date)
     {
         $searchModel = new CalendarSearch();

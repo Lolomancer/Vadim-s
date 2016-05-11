@@ -120,4 +120,16 @@ class Access extends ActiveRecord
 
         return false;
     }
+
+    /**
+     * Check logged user is creator or not
+     *
+     * @param Calendar $model
+     * @return bool
+     */
+    public static function checkIsCreator ($model)
+    {
+        return self::checkAccess($model) == self::ACCESS_CREATOR;
+    }
+
 }

@@ -160,6 +160,11 @@ class AccessController extends Controller
         ]);
     }
 
+    /**
+     * Shows the dates shared by selected User for logged User
+     *
+     * @return string
+     */
     public function actionDates($id)
     {
         $searchModel = new AccessSearch();
