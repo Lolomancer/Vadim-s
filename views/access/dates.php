@@ -10,7 +10,7 @@ use app\models\User;
 /* @var $searchModel app\models\search\CalendarSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'События друга');
+$this->title = Yii::t('app', 'События друга').' '.User::findOne($id)->name . ' ' . User::findOne($id)->surname;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="calendar-index">
@@ -25,9 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'date',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return Html::a(
-                                $model->date,
-                            ['/calendar/shared/'.$model->user_owner.'/'.$model->date]
+                        return Html::a(Yii::$app->formatter->asDate($model->date, 'dd/MM/yyyy'),
+                            ['/calendar/shared/'.$model->user_owner.'?date='.$model->date]
                         );
                     },
                 ],

@@ -170,7 +170,8 @@ class AccessController extends Controller
 
         return $this->render('dates', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'id' => $id
         ]);
     }
 

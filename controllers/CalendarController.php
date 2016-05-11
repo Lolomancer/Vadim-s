@@ -32,10 +32,10 @@ class CalendarController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['Mycalendar', 'Sharedevents','create', 'update', 'delete'],
+                'only' => ['mycalendar', 'shared','create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['Mycalendar', 'Sharedevents', 'create', 'update', 'delete'],
+                        'actions' => ['mycalendar', 'shared', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -164,5 +164,21 @@ class CalendarController extends Controller
                 'dataProvider' => $dataProvider,
         ]);
 
+    }
+
+    public function actionShared($id, $date)
+    {
+        $searchModel = new CalendarSearch();
+
+        $dataProvider = $searchModel->search([
+            'query' => Calendar::find()->withCreator($id)->withDate($date)
+        ]);
+
+        return $this->render('shared', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'id' => $id,
+            'date' => $date
+        ]);
     }
 }
